@@ -54,8 +54,10 @@ fn main(){
 	}
 
 	let cleanup = ImageCleanup::new(docker);
+	let mut done_action = false;
 
 	if matches.opt_present("numbered") {
+		done_action = true;
 		let keep_str = matches.opt_str("numbered-keep").unwrap_or("1".to_string());
 		let keep = keep_str.parse::<usize>().expect("Number of containers to keep cannot be parsed");
 
@@ -64,5 +66,9 @@ fn main(){
 		for name in matches.opt_strs("numbered") {
 			cleanup.cleanup(&NumberedCleanup::new(&name, keep)).expect("Removal failed");
 		}
+	}
+
+	if !done_action {
+		usage(name, &options);
 	}
 }
