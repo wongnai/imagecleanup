@@ -1,0 +1,8 @@
+[package]
+name = "imagecleanup"
+version = "0.1.0"
+authors = ["Manatsawin Hanmongkolchai <manatsawin+git@gmail.com>"]
+
+[dependencies]
+docker = { git = "https://github.com/whs/rust-docker.git" }
+getopts = "0.2.14"
