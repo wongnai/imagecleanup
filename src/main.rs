@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 extern crate getopts;
 extern crate docker;
 extern crate imagecleanup;
@@ -15,6 +18,8 @@ fn usage(name: &String, options: &Options){
 }
 
 fn main(){
+	env_logger::init().unwrap();
+
 	let mut options = Options::new();
 	options.optopt("H", "docker-tcp", "Docker address (TCP)", "http://localhost:2375/");
 	options.optopt("S", "docker-unix", "Docker unix path", DEFAULT_DOCKER_UNIX);
@@ -39,9 +44,12 @@ fn main(){
 
 	let docker;
 	if matches.opt_present("H") {
-		docker = Docker::connect_with_http(matches.opt_str("H").unwrap()).unwrap();
+		let url = matches.opt_str("H").unwrap();
+		debug!("Connecting to Docker via TCP {}", url);
+		docker = Docker::connect_with_http(url).unwrap();
 	} else {
 		let unix_path = matches.opt_str("S").unwrap_or(DEFAULT_DOCKER_UNIX.to_string());
+		debug!("Connecting to Docker via Unix {}", unix_path);
 		docker = Docker::connect_with_unix(unix_path).unwrap();
 	}
 
@@ -50,6 +58,8 @@ fn main(){
 	if matches.opt_present("numbered") {
 		let keep_str = matches.opt_str("numbered-keep").unwrap_or("1".to_string());
 		let keep = keep_str.parse::<usize>().expect("Number of containers to keep cannot be parsed");
+
+		debug!("Using numbered strategy. Keeping {} containers", keep);
 
 		for name in matches.opt_strs("numbered") {
 			cleanup.cleanup(&NumberedCleanup::new(&name, keep)).expect("Removal failed");

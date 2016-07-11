@@ -2,6 +2,8 @@
 set -e
 IMAGE_NAME=imagecleanup_test
 
+export RUST_LOG=debug
+
 failTest(){
         echo Test failed. Printing list of remaining images...
         docker images $IMAGE_NAME
