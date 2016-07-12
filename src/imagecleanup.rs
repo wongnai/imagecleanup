@@ -19,8 +19,11 @@ impl ImageCleanup {
 		let remove = try!(strategy.filter(images));
 
 		for image in remove {
-			info!("Remove {}", image.RepoTags.first().unwrap_or(&"Unknown".to_string()));
-			self.docker.delete_image(image, false, false).unwrap();
+			for tag in image.RepoTags {
+				info!("Remove {}", tag);
+				let status = try!(self.docker.delete_image(tag, false, false));
+				debug!("{:?}", status);
+			}
 		}
 		Ok(())
 	}

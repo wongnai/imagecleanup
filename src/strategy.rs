@@ -23,29 +23,33 @@ impl<'a> CleanupStrategy for NumberedCleanup<'a> {
 	fn filter(&self, images: Vec<Image>) -> Result<Vec<Image>, Error>{
 		let mut result = Vec::new();
 
-		for image in images {
-			if image.RepoTags.len() != 1 {
-				// don't remove image with more than one tags
-				continue;
+		'outer: for image in images {
+			let mut tags = Vec::with_capacity(image.RepoTags.len());
+
+			for tag in &image.RepoTags {
+				let tag_parts: Vec<&str> = tag.split(":").collect();
+				let name = tag_parts[0];
+				let tag = tag_parts[1];
+
+				if name != self.name {
+					continue 'outer;
+				}
+
+				let tag_no = match tag.parse::<i64>() {
+					Ok(x) => x,
+					Err(_) => continue 'outer,
+				};
+
+				tags.push(tag_no);
 			}
 
-			let first_tag = image.RepoTags.first().unwrap().clone();
-			let tag_parts: Vec<&str> = first_tag.split(":").collect();
-			let name = tag_parts[0];
-			let tag = tag_parts[1];
-
-			if name != self.name {
-				continue;
+			if tags.len() == 0 {
+				continue
 			}
-
-			let tag_no = match tag.parse::<i64>() {
-				Ok(x) => x,
-				Err(_) => continue,
-			};
 
 			result.push(ImageNumbered{
 				image: image,
-				number: tag_no,
+				number: *tags.iter().max().unwrap(),
 			});
 		}
 
