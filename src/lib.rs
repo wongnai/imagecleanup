@@ -7,3 +7,6 @@ mod strategy;
 
 pub use imagecleanup::*;
 pub use strategy::*;
+
+#[cfg(test)]
+mod test;
