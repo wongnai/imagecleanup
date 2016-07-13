@@ -9,15 +9,12 @@ and so this project was born.
 
 ## Install
 
-Make sure you have openssl installed
+- Binary is available from [release](https://github.com/whs/imagecleanup/releases)
+- Docker image available as [willwill/imagecleanup](https://hub.docker.com/r/willwill/imagecleanup/) (see Docker usage on Docker hub)
 
-(or you can just copy from the release page)
+## Building
 
-```
-cargo build --release
-```
-
-Put `target/release/imagecleanup` somewhere in your $PATH.
+Simply use cargo: `cargo build`
 
 ## Usage
 
