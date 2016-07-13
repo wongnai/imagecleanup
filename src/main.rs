@@ -12,8 +12,19 @@ use imagecleanup::*;
 
 const DEFAULT_DOCKER_UNIX: &'static str = "/var/run/docker.sock";
 
+fn version(){
+	println!("{}", env!("CARGO_PKG_VERSION"))
+}
+
 fn usage(name: &str, options: &Options){
-	let usage = format!("Usage: {} --numbered gcr.io/image --numbered-keep 1\n\nDefault to connect via unix socket", name);
+	let usage = format!(
+		"{} v{}\n{}\n{}\n\nUsage: {} --numbered gcr.io/image --numbered-keep 1\n\nDefault to connect via unix socket",
+		env!("CARGO_PKG_NAME"),
+		env!("CARGO_PKG_VERSION"),
+		env!("CARGO_PKG_DESCRIPTION"),
+		env!("CARGO_PKG_HOMEPAGE"),
+		name,
+	);
 	println!("{}", options.usage(&usage))
 }
 
@@ -24,6 +35,7 @@ fn main(){
 	options.optopt("H", "docker-tcp", "Docker address (TCP)", "http://localhost:2375/");
 	options.optopt("S", "docker-unix", "Docker unix path", DEFAULT_DOCKER_UNIX);
 	options.optflag("h", "help", "Print help menu");
+	options.optflag("V", "version", "Print version");
 	options.optopt("", "numbered", "Cleanup numbered image", "IMAGE_NAME");
 	options.optopt("", "numbered-keep", "Number of numbered images to keep (default to 1)", "1");
 
@@ -39,6 +51,11 @@ fn main(){
     };
     if matches.opt_present("h") {
         usage(name, &options);
+        return;
+    }
+
+	if matches.opt_present("V") {
+        version();
         return;
     }
 
