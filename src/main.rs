@@ -12,7 +12,7 @@ use imagecleanup::*;
 
 const DEFAULT_DOCKER_UNIX: &'static str = "/var/run/docker.sock";
 
-fn usage(name: &String, options: &Options){
+fn usage(name: &str, options: &Options){
 	let usage = format!("Usage: {} --numbered gcr.io/image --numbered-keep 1\n\nDefault to connect via unix socket", name);
 	println!("{}", options.usage(&usage))
 }
@@ -28,7 +28,7 @@ fn main(){
 	options.optopt("", "numbered-keep", "Number of numbered images to keep (default to 1)", "1");
 
 	let args: Vec<String> = env::args().collect();
-	let ref name = args[0];
+	let name = &args[0];
 	let matches = match options.parse(&args[1..]) {
 		Ok(m) => { m }
 		Err(f) => {
@@ -42,16 +42,15 @@ fn main(){
         return;
     }
 
-	let docker;
-	if matches.opt_present("H") {
+	let docker = if matches.opt_present("H") {
 		let url = matches.opt_str("H").unwrap();
 		debug!("Connecting to Docker via TCP {}", url);
-		docker = Docker::connect_with_http(url).unwrap();
+		Docker::connect_with_http(url).unwrap()
 	} else {
 		let unix_path = matches.opt_str("S").unwrap_or(DEFAULT_DOCKER_UNIX.to_string());
 		debug!("Connecting to Docker via Unix {}", unix_path);
-		docker = Docker::connect_with_unix(unix_path).unwrap();
-	}
+		Docker::connect_with_unix(unix_path).unwrap()
+	};
 
 	let cleanup = ImageCleanup::new(docker);
 	let mut done_action = false;

@@ -6,12 +6,17 @@ pub trait CleanupStrategy {
 }
 
 pub struct NumberedCleanup<'a>{
-	name: &'a String,
+	name: &'a str,
 	num_to_keep: usize,
 }
 
+struct ImageNumbered{
+	image: Image,
+	number: i64,
+}
+
 impl<'a> NumberedCleanup<'a> {
-	pub fn new(name: &String, num_to_keep: usize) -> NumberedCleanup{
+	pub fn new(name: &str, num_to_keep: usize) -> NumberedCleanup{
 		NumberedCleanup {
 			name: name,
 			num_to_keep: num_to_keep,
@@ -27,7 +32,7 @@ impl<'a> CleanupStrategy for NumberedCleanup<'a> {
 			let mut tags = Vec::with_capacity(image.RepoTags.len());
 
 			for tag in &image.RepoTags {
-				let tag_parts: Vec<&str> = tag.split(":").collect();
+				let tag_parts: Vec<&str> = tag.split(':').collect();
 				let name = tag_parts[0];
 				let tag = tag_parts[1];
 
@@ -43,8 +48,8 @@ impl<'a> CleanupStrategy for NumberedCleanup<'a> {
 				tags.push(tag_no);
 			}
 
-			if tags.len() == 0 {
-				continue
+			if tags.is_empty() {
+				continue;
 			}
 
 			result.push(ImageNumbered{
@@ -64,9 +69,4 @@ impl<'a> CleanupStrategy for NumberedCleanup<'a> {
 
 		Ok(result.into_iter().map(|item| item.image).collect())
 	}
-}
-
-struct ImageNumbered{
-	image: Image,
-	number: i64,
 }
