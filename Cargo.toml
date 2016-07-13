@@ -1,7 +1,13 @@
 [package]
 name = "imagecleanup"
 version = "1.1.0"
-authors = ["Manatsawin Hanmongkolchai <manatsawin+git@gmail.com>"]
+authors = ["Manatsawin Hanmongkolchai <manatsawin@gmail.com>"]
+description = "Cleanup unused Docker images"
+homepage = "https://github.com/whs/imagecleanup"
+repository = "https://github.com/whs/imagecleanup.git"
+license = "MIT"
+readme = "README.md"
+keywords = ["docker"]
 
 [dependencies]
 docker = { git = "https://github.com/whs/rust-docker.git" }
